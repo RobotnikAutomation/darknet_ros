@@ -1,4 +1,4 @@
-#include "yolo_v2_class.hpp"
+#include <yolo_v2_class.hpp>
 
 class extrapolate_coords_t{
 public:
