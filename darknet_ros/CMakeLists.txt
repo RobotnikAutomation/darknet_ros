@@ -6,17 +6,39 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 # Define path of darknet folder here.
 find_path(DARKNET_PATH
-  NAMES "README.md"
-  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../darknet/" "${CMAKE_CURRENT_SOURCE_DIR}/../darknet_alexeyab/")
+  NAMES "DarknetConfig.cmake"
+  HINTS 
+    "/usr/local/share/darknet/"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../darknet/"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../darknet_alexeyab/"
+  )
 message("Darknet path dir = ${DARKNET_PATH}")
 add_definitions(-DDARKNET_FILE_PATH="${DARKNET_PATH}")
+
+
+find_library(DARKNET_LIBRARY
+    NAMES
+      libdark
+      dark
+#[[    HINTS
+      "/usr/local"
+    PATH
+      "/usr/local"
+    PATH_SUFFIXES
+]]
+)
+if (DARKNET_LIBRARY)
+  message(STATUS "DARKNET Libraries: ${DARKNET_LIBRARY}")
+else()
+  message(STATUS "DARKNET not found")
+endif()
 
 # Find CUDA
 FIND_PACKAGE(CUDA)
 if (CUDA_FOUND)
   find_package(CUDA REQUIRED)
   message(STATUS "CUDA Version: ${CUDA_VERSION_STRINGS}")
-  message(STATUS "CUDA Libararies: ${CUDA_LIBRARIES}")
+  message(STATUS "CUDA Libraries: ${CUDA_LIBRARIES}")
   set(
     CUDA_NVCC_FLAGS
     ${CUDA_NVCC_FLAGS};
@@ -65,7 +87,7 @@ catkin_package(
 )
 
 include_directories(
-  ${DARKNET_PATH}/src
+  #[[${DARKNET_PATH}/src]]
   ${DARKNET_PATH}/include
   include
   ${Boost_INCLUDE_DIRS}
@@ -79,11 +101,11 @@ if (CUDA_FOUND)
   )
 
   cuda_add_library(${PROJECT_NAME}_lib
-    ${DARKNET_PATH}/src/yolo_v2_class.cpp
+#[[    ${DARKNET_PATH}/src/yolo_v2_class.cpp]]
     src/YoloROSTracker.cpp
     src/Extrapolate_Coordinates.cpp
     src/Tracking_Kalman.cpp
-    ${DARKNET_PATH}/src/activation_layer.c        ${DARKNET_PATH}/src/im2col.c
+#[[    ${DARKNET_PATH}/src/activation_layer.c        ${DARKNET_PATH}/src/im2col.c
     ${DARKNET_PATH}/src/activations.c             ${DARKNET_PATH}/src/image.c
     ${DARKNET_PATH}/src/avgpool_layer.c           ${DARKNET_PATH}/src/layer.c
     ${DARKNET_PATH}/src/batchnorm_layer.c         ${DARKNET_PATH}/src/list.c
@@ -115,7 +137,7 @@ if (CUDA_FOUND)
     ${DARKNET_PATH}/src/blas_kernels.cu           ${DARKNET_PATH}/src/dropout_layer_kernels.cu
     ${DARKNET_PATH}/src/col2im_kernels.cu         ${DARKNET_PATH}/src/im2col_kernels.cu
     ${DARKNET_PATH}/src/convolutional_kernels.cu  ${DARKNET_PATH}/src/maxpool_layer_kernels.cu
-    ${DARKNET_PATH}/src/network_kernels.cu
+    ${DARKNET_PATH}/src/network_kernels.cu]]
   )
 
   target_link_libraries(${PROJECT_NAME}_lib
@@ -126,6 +148,7 @@ if (CUDA_FOUND)
     cudart
     cublas
     curand
+    ${DARKNET_LIBRARY}
     ${Boost_LIBRARIES}
     ${OpenCV_LIBRARIES}
     ${catkin_LIBRARIES}
@@ -139,11 +162,11 @@ if (CUDA_FOUND)
 else()
 
   add_library(${PROJECT_NAME}_lib
-    ${DARKNET_PATH}/src/yolo_v2_class.cpp
+    #[[${DARKNET_PATH}/src/yolo_v2_class.cpp]]
     src/YoloROSTracker.cpp
     src/Extrapolate_Coordinates.cpp
     src/Tracking_Kalman.cpp
-    ${DARKNET_PATH}/src/activation_layer.c        ${DARKNET_PATH}/src/im2col.c
+#[[    ${DARKNET_PATH}/src/activation_layer.c        ${DARKNET_PATH}/src/im2col.c
     ${DARKNET_PATH}/src/activations.c             ${DARKNET_PATH}/src/image.c
     ${DARKNET_PATH}/src/avgpool_layer.c           ${DARKNET_PATH}/src/layer.c
     ${DARKNET_PATH}/src/batchnorm_layer.c         ${DARKNET_PATH}/src/list.c
@@ -167,7 +190,7 @@ else()
     ${DARKNET_PATH}/src/gru_layer.c               ${DARKNET_PATH}/src/utils.c
     ${DARKNET_PATH}/src/http_stream.cpp
     ${DARKNET_PATH}/src/upsample_layer.c	  ${DARKNET_PATH}/src/lstm_layer.c
-                                                  ${DARKNET_PATH}/src/yolo_layer.c
+                                                  ${DARKNET_PATH}/src/yolo_layer.c]]
 
   )
 
@@ -175,6 +198,7 @@ else()
     m
     pthread
     stdc++
+    ${DARKNET_LIBRARY}
     ${OpenCV_LIBRARIES}
     ${catkin_LIBRARIES}
     ${OpenCV_LIBS}
