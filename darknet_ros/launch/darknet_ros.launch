@@ -5,8 +5,8 @@
   <arg name="launch_prefix" default=""/>
 
   <!-- Config and weights folder. -->
-  <arg name="yolo_weights_path"          default="$(find darknet_ros)/yolo_network_config/weights"/>
-  <arg name="yolo_config_path"           default="$(find darknet_ros)/yolo_network_config/cfg"/>
+  <arg name="yolo_weights_path"          default="/usr/local/share/darknet/weights"/>
+  <arg name="yolo_config_path"           default="/usr/local/share/darknet/cfg"/>
 
   <!-- ROS and network parameter files -->
   <arg name="ros_param_file"             default="$(find darknet_ros)/config/ros.yaml"/>
