@@ -46,6 +46,8 @@
     name="darknet_ros"
     output="screen"
     launch-prefix="$(arg launch_prefix)"
+    respawn="true"
+    respawn_delay="5"
   >
     <param
       name="weights_path"
